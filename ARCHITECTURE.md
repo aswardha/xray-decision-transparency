@@ -202,13 +202,10 @@ X-Ray-style instrumentation at the filtering and diversification stages would ha
 
 # API Summary
 
-POST /api/v1/runs          Ingest a pipeline run
-
-GET  /api/v1/runs/{id}     Retrieve a run and its steps
-
-POST /api/v1/runs/query    Cross-run analytical queries
-
-GET  /api/v1/debug/{id}    Debug-focused analysis view
+- POST /api/v1/runs          Ingest a pipeline run
+- GET  /api/v1/runs/{id}     Retrieve a run and its steps
+- POST /api/v1/runs/query    Cross-run analytical queries
+- GET  /api/v1/debug/{id}    Debug-focused analysis view
 
 
 The API surface is intentionally small. Most complexity lives in the data model and conventions, not endpoint count.
