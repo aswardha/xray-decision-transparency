@@ -11,9 +11,13 @@ The system is intentionally designed to prioritize debuggability and reasoning v
 # High-Level Flow
 User Pipeline
    └─ X-Ray SDK (in-process, non-blocking)
+   
         └─ PipelineRun (in-memory)
+   
               └─ async send on finish()
+              
                     └─ X-Ray API
+                    
                           └─ Storage (metadata + step metrics)
 
 
@@ -52,10 +56,10 @@ StepContext
 
 
 Each step captures:
-    -what came in
-    -what went out
-    -what logic reduced or transformed candidates
-    -why that logic was applied
+-what came in
+-what went out
+-what logic reduced or transformed candidates
+-why that logic was applied
 
 
 # Data Model Rationale
@@ -71,15 +75,15 @@ Rejected because: reconstructing decision intent post-hoc is brittle and expensi
 # Why counts + summaries instead of full candidate storage?
 
 Every step must report:
-    -candidates_in
-    -candidates_out
+-candidates_in
+-candidates_out
 
 Candidate-level details are optional and sampled.
 
 Alternative considered: storing every candidate and rejection reason
 Rejected because:
-    5,000 candidates × multiple steps becomes prohibitively expensive
-    teams stop instrumenting when observability is too costly
+5,000 candidates × multiple steps becomes prohibitively expensive.
+Teams stop instrumenting when observability is too costly.
 
 The system optimizes for diagnosis, not replay.
 
@@ -147,12 +151,10 @@ Developers must follow light conventions. This constraint enables powerful cross
 Capturing full details for all candidates is often unnecessary and expensive.
 
 X-Ray supports capture levels:
-    Minimal: counts only
-    Summary: aggregated stats
-    Detailed: representative samples
-    Full: explicit opt-in
-
-Developers choose per step. The system may downgrade overly large payloads.
+Minimal: counts only
+Summary: aggregated stats
+Detailed: representative samples
+Full: explicit opt-in
 
 # Key trade-off:
 X-Ray does not support deterministic replay. In non-deterministic systems (LLMs, external APIs), replay often gives a false sense of correctness while significantly increasing cost.
@@ -183,11 +185,9 @@ Instrumentation is incremental. Teams can add depth where debugging value is hig
 # Backend Unavailability
 
 The SDK never blocks execution.
-    -network failure → warning only
-    
-    -API down → data dropped
-    
-    -pipeline correctness unaffected
+-network failure → warning only
+-API down → data dropped
+-pipeline correctness unaffected
 
 Observability must not affect system behavior.
 
@@ -199,6 +199,7 @@ In a previous recommendation system (retrieve → score → re-rank → diversif
 X-Ray-style instrumentation at the filtering and diversification stages would have immediately revealed that a diversity constraint was eliminating most fresh content for high-activity users—an issue that previously required days of log analysis and hypothesis testing.
 
 API Summary
+
 POST /api/v1/runs          Ingest a pipeline run
 GET  /api/v1/runs/{id}     Retrieve a run and its steps
 POST /api/v1/runs/query    Cross-run analytical queries
@@ -210,15 +211,11 @@ The API surface is intentionally small. Most complexity lives in the data model 
 
 # What’s Next
 If shipped for real-world use:
-    -correlation with distributed tracing (OpenTelemetry)
-    
-    -anomaly detection on elimination rates
-    
-    -run-to-run diffing for “why did this fail?”
-    
-    -SDK auto-instrumentation and multi-language support
-    
-    -privacy controls and PII redaction
+-correlation with distributed tracing (OpenTelemetry)
+-anomaly detection on elimination rates
+-run-to-run diffing for “why did this fail?”
+-SDK auto-instrumentation and multi-language support
+-privacy controls and PII redaction
 
 
 # Final Note
