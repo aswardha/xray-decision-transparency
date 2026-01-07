@@ -56,10 +56,10 @@ StepContext
 
 
 Each step captures:
--what came in
--what went out
--what logic reduced or transformed candidates
--why that logic was applied
+- what came in
+- what went out
+- what logic reduced or transformed candidates
+- why that logic was applied
 
 
 # Data Model Rationale
@@ -75,8 +75,8 @@ Rejected because: reconstructing decision intent post-hoc is brittle and expensi
 # Why counts + summaries instead of full candidate storage?
 
 Every step must report:
--candidates_in
--candidates_out
+- candidates_in
+- candidates_out
 
 Candidate-level details are optional and sampled.
 
@@ -100,13 +100,14 @@ Scenario: A competitor selection pipeline matches a phone case to a laptop stand
 # Step 1: Inspect the run
 
 Query the run:
+    
     GET /api/v1/runs/{run_id}
 
 
 You see:
-    -keyword generation produced generic terms ("laptop", "stand")
-    -filtering reduced candidates from 150 → 3
-    -category filter eliminated the majority of candidates
+    - keyword generation produced generic terms ("laptop", "stand")
+    - filtering reduced candidates from 150 → 3
+    - category filter eliminated the majority of candidates
 
 # Step 2: Identify the failure point
 
@@ -124,7 +125,7 @@ POST /api/v1/runs/query
 
 Result: the same category filter eliminates > 90% of candidates in a large percentage of runs.
 Root cause: category matching is too strict (exact match instead of hierarchical).
-This diagnosis does not require replaying the pipeline or inspecting raw logs—only step-level decision data.
+This diagnosis does not require replaying the pipeline or inspecting raw logs - only step-level decision data.
 
 
 # Queryability Across Pipelines
@@ -133,11 +134,10 @@ X-Ray is used across heterogeneous pipelines with different steps.
 Queryability is enabled through conventions, not hard-coded schemas.
 
 # Enforced Conventions
-
-    -Standard step types (FILTERING, RANKING, etc.)
-    -Mandatory candidate counts for every step
-    -Free-form but meaningful reasoning text
-    -Schema-less run context
+- Standard step types (FILTERING, RANKING, etc.)
+- Mandatory candidate counts for every step
+- Free-form but meaningful reasoning text
+- Schema-less run context
 
 This enables queries like:
     “Show all runs where a filtering step eliminated >90% of candidates” without knowing pipeline-specific details.
@@ -151,10 +151,10 @@ Developers must follow light conventions. This constraint enables powerful cross
 Capturing full details for all candidates is often unnecessary and expensive.
 
 X-Ray supports capture levels:
-Minimal: counts only
-Summary: aggregated stats
-Detailed: representative samples
-Full: explicit opt-in
+- Minimal: counts only
+- Summary: aggregated stats
+- Detailed: representative samples
+- Full: explicit opt-in
 
 # Key trade-off:
 X-Ray does not support deterministic replay. In non-deterministic systems (LLMs, external APIs), replay often gives a false sense of correctness while significantly increasing cost.
@@ -185,9 +185,9 @@ Instrumentation is incremental. Teams can add depth where debugging value is hig
 # Backend Unavailability
 
 The SDK never blocks execution.
--network failure → warning only
--API down → data dropped
--pipeline correctness unaffected
+- network failure → warning only
+- API down → data dropped
+- pipeline correctness unaffected
 
 Observability must not affect system behavior.
 
@@ -196,13 +196,16 @@ Observability must not affect system behavior.
 
 In a previous recommendation system (retrieve → score → re-rank → diversify → select), failures surfaced as “stale results” with no clear cause.
 
-X-Ray-style instrumentation at the filtering and diversification stages would have immediately revealed that a diversity constraint was eliminating most fresh content for high-activity users—an issue that previously required days of log analysis and hypothesis testing.
+X-Ray-style instrumentation at the filtering and diversification stages would have immediately revealed that a diversity constraint was eliminating most fresh content for high-activity users - an issue that previously required days of log analysis and hypothesis testing.
 
-API Summary
+# API Summary
 
 POST /api/v1/runs          Ingest a pipeline run
+
 GET  /api/v1/runs/{id}     Retrieve a run and its steps
+
 POST /api/v1/runs/query    Cross-run analytical queries
+
 GET  /api/v1/debug/{id}    Debug-focused analysis view
 
 
@@ -211,11 +214,11 @@ The API surface is intentionally small. Most complexity lives in the data model 
 
 # What’s Next
 If shipped for real-world use:
--correlation with distributed tracing (OpenTelemetry)
--anomaly detection on elimination rates
--run-to-run diffing for “why did this fail?”
--SDK auto-instrumentation and multi-language support
--privacy controls and PII redaction
+- correlation with distributed tracing (OpenTelemetry)
+- anomaly detection on elimination rates
+- run-to-run diffing for “why did this fail?”
+- SDK auto-instrumentation and multi-language support
+- privacy controls and PII redaction
 
 
 # Final Note
