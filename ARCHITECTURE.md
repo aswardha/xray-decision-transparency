@@ -3,9 +3,7 @@
 # Overview
 
 X-Ray is a decision-transparency system for multi-step, non-deterministic pipelines (e.g. LLM-driven selection, ranking, categorization).
-
 Traditional tracing explains what executed. X-Ray explains why a particular output was chosen in non-deterministic pipelines.
-
 The system is intentionally designed to prioritize debuggability and reasoning visibility over deterministic replay or full data capture.
 
 # System Design
@@ -23,7 +21,6 @@ User Pipeline
 X-Ray must never block or alter pipeline behavior. Loss of observability is acceptable; loss of correctness is not.
 
 # Core Data Model
-
 # PipelineRun
 
 Represents one execution of a pipeline.
@@ -121,7 +118,7 @@ POST /api/v1/runs/query
   "min_candidates_eliminated_pct": 90
 }
 
-Result: the same category filter eliminates >90% of candidates in a large percentage of runs.
+Result: the same category filter eliminates > 90% of candidates in a large percentage of runs.
 Root cause: category matching is too strict (exact match instead of hierarchical).
 This diagnosis does not require replaying the pipeline or inspecting raw logs—only step-level decision data.
 
@@ -132,14 +129,14 @@ X-Ray is used across heterogeneous pipelines with different steps.
 Queryability is enabled through conventions, not hard-coded schemas.
 
 # Enforced Conventions
+
     -Standard step types (FILTERING, RANKING, etc.)
     -Mandatory candidate counts for every step
     -Free-form but meaningful reasoning text
     -Schema-less run context
 
 This enables queries like:
-    “Show all runs where a filtering step eliminated >90% of candidates”
-without knowing pipeline-specific details.
+    “Show all runs where a filtering step eliminated >90% of candidates” without knowing pipeline-specific details.
 
 # Trade-off:
 Developers must follow light conventions. This constraint enables powerful cross-pipeline analysis that would otherwise be impossible.
@@ -170,9 +167,9 @@ xray.finish()
 
 
 Provides:
-    run-level visibility
-    success/failure
-    duration
+    run-level visibility,
+    success/failure,
+    duration.
 
 Full Instrumentation with xray.step("filter", StepType.FILTERING) as step:
 
@@ -187,7 +184,9 @@ Instrumentation is incremental. Teams can add depth where debugging value is hig
 
 The SDK never blocks execution.
     -network failure → warning only
+    
     -API down → data dropped
+    
     -pipeline correctness unaffected
 
 Observability must not affect system behavior.
@@ -212,9 +211,13 @@ The API surface is intentionally small. Most complexity lives in the data model 
 # What’s Next
 If shipped for real-world use:
     -correlation with distributed tracing (OpenTelemetry)
+    
     -anomaly detection on elimination rates
+    
     -run-to-run diffing for “why did this fail?”
+    
     -SDK auto-instrumentation and multi-language support
+    
     -privacy controls and PII redaction
 
 
