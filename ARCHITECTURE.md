@@ -9,8 +9,10 @@ The system is intentionally designed to prioritize debuggability and reasoning v
 # System Design
 
 # High-Level Flow
-User Pipeline
-   └─ X-Ray SDK (in-process, non-blocking)
+
+ User Pipeline
+
+      └─ X-Ray SDK (in-process, non-blocking)
    
         └─ PipelineRun (in-memory)
    
@@ -117,11 +119,11 @@ This immediately narrows investigation to constraint logic, not retrieval or ran
 
 # Step 3: Validate across runs
 
-POST /api/v1/runs/query
-{
-  "step_type": "filtering",
-  "min_candidates_eliminated_pct": 90
-}
+    POST /api/v1/runs/query
+    {
+     "step_type": "filtering",
+     "min_candidates_eliminated_pct": 90
+    }
 
 Result: the same category filter eliminates > 90% of candidates in a large percentage of runs.
 Root cause: category matching is too strict (exact match instead of hierarchical).
