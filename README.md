@@ -19,11 +19,17 @@ For system design details, see ARCHITECTURE.md.
 
 Repository Structure
 xray/
+
 ├── ARCHITECTURE.md      # System design & reasoning (start here)
+
 ├── README.md            # Setup & run instructions
+
 │
+
 ├── api/                 # X-Ray backend (FastAPI)
+
 ├── sdk/                 # X-Ray SDK (developer-facing)
+
 └── demo/                # Example pipeline
 
 ## Approach
