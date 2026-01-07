@@ -165,9 +165,9 @@ X-Ray does not support deterministic replay. In non-deterministic systems (LLMs,
 # Developer Experience
 # Minimal Instrumentation
 
-xray = create_xray("pipeline", context={...})
-result = pipeline(input)
-xray.finish()
+    xray = create_xray("pipeline", context={...})
+    result = pipeline(input)
+    xray.finish()
 
 
 Provides:
